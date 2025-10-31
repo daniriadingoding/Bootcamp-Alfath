@@ -39,7 +39,11 @@
                             <tbody>
                                 @forelse ($orders as $order)
                                 <tr>
-                                    <th scope="row">#{{ $order->id }}</th>
+                                    <th scope="row">
+                                        <a href="{{ route('orders.show', $order) }}" class="btn btn-link fw-bold p-0">
+                                            #{{ $order->id }}
+                                        </a>
+                                    </th>
                                     @if(Auth::user()->isMerchant())
                                         <td>{{ $order->user->name }}</td>
                                     @endif
@@ -75,7 +79,7 @@
                                         </form>
                                     </td>
                                     @endif
-                                    </tr>
+                                </tr>
                                 @empty
                                 <tr>
                                     <td colspan="{{ Auth::user()->isMerchant() ? '7' : '5' }}" class="text-center">Tidak ada pesanan.</td>

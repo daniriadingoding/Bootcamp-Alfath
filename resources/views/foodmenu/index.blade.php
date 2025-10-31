@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>{{ __('Daftar Menu Makanan') }}</span>
@@ -49,11 +49,11 @@
                                     <td>Rp {{ number_format($foodMenu->price, 0, ',', '.') }}</td>
                                     @if(Auth::user()->isAdmin())
                                     <td>
-                                        <a href="{{ route('foodmenu.edit', $foodMenu->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{{ route('foodmenu.edit', $foodMenu->id) }}" class="btn btn-warning btn-sm d-block mb-1">Edit</a>
                                         <form action="{{ route('foodmenu.destroy', $foodMenu->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus menu ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                            <button type="submit" class="btn btn-danger btn-sm d-block w-100">Hapus</button>
                                         </form>
                                     </td>
                                     @endif
