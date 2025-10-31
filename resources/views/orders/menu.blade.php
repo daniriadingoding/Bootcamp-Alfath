@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2 class="mb-4">Pilih Menu Makanan Anda</h2>
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Pilih Menu Makanan Anda</h1>
     
-    <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
+    <form action="{{ route('orders.store') }}" method="POST" id="orderForm">
         @csrf
         <div class="row">
             @foreach($foodItems as $foodItem)
@@ -13,39 +13,41 @@
                     <img src="{{ $foodItem->image ? Storage::url($foodItem->image) : 'https://via.placeholder.com/300x200' }}" class="card-img-top" alt="{{ $foodItem->name }}" style="height: 200px; object-fit: cover;">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ $foodItem->name }}</h5>
-                        <p class="card-text">{{ $foodItem->description }}</p>
-                        <p class="card-text fw-bold">Harga: Rp{{ number_format($foodItem->price, 0, ',', '.') }}</p>
+                        <p class="card-text text-muted">{{ $foodItem->description }}</p>
+                        <p class="card-text mt-auto"><b>Harga: Rp{{ number_format($foodItem->price, 0, ',', '.') }}</b></p>
                         
-                        <div class="mt-auto">
-                            <label for="quantity-{{ $foodItem->id }}" class="form-label">Jumlah</label>
-                            <input type="number" class="form-control quantity-input" id="quantity-{{ $foodItem->id }}" 
-                                   data-id="{{ $foodItem->id }}" 
-                                   data-price="{{ $foodItem->price }}" 
-                                   data-name="{{ $foodItem->name }}"
-                                   min="0" value="0">
+                        <div class="input-group mt-2">
+                            <span class="input-group-text">Jumlah</span>
+                            <input type="number" class="form-control item-quantity" value="0" min="0" 
+                                   data-id="{{ $foodItem->id }}"
+                                   data-price="{{ $foodItem->price }}"
+                                   data-name="{{ $foodItem->name }}">
                         </div>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
+        
+        <hr>
 
         <div id="items-container"></div>
-        <input type="hidden" name="total_price" id="total_price_input" value="0">
+        <input type="hidden" name="total_price" id="hiddenTotalPrice" value="0">
 
         <div class="card mt-4 shadow-sm">
             <div class="card-body">
                 <div class="mb-3">
                     <label for="address" class="form-label fw-bold">Alamat Pengiriman:</label>
-                    <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3" required>{{ old('address') }}</textarea>
+                    <textarea name="address" id="address" class="form-control @error('address') is-invalid @enderror" rows="3" required>{{ old('address') }}</textarea>
                     @error('address')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 
-                <h3 id="total-price-display" class="fw-bold">Total Harga: Rp0</h3>
-                
-                <button type="submit" class="btn btn-primary w-100 mt-3">Pesan Sekarang</button>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold">Total Harga: Rp<span id="totalPrice">0</span></h4>
+                    <button type="submit" class="btn btn-success btn-lg">Pesan Sekarang</button>
+                </div>
             </div>
         </div>
     </form>
@@ -53,58 +55,54 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const inputs = document.querySelectorAll('.quantity-input');
-    const itemsContainer = document.getElementById('items-container');
-    const totalPriceDisplay = document.getElementById('total-price-display');
-    const totalPriceInput = document.getElementById('total_price_input');
     const orderForm = document.getElementById('orderForm');
-    
-    let cart = {}; // { food_menu_id: { quantity: 1, price: 10000, name: 'Mie' } }
+    const itemQuantities = document.querySelectorAll('.item-quantity');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    const hiddenTotalPriceInput = document.getElementById('hiddenTotalPrice');
+    const itemsContainer = document.getElementById('items-container');
+    let cart = {}; // { food_menu_id: { quantity: 1, price: 10000 } }
 
-    function updateCart() {
+    function calculateTotalPrice() {
         let total = 0;
-        itemsContainer.innerHTML = ''; // Kosongkan container input
+        itemsContainer.innerHTML = ''; // Kosongkan container
         
-        for (const id in cart) {
-            const item = cart[id];
-            if (item.quantity > 0) {
-                total += item.quantity * item.price;
+        itemQuantities.forEach(input => {
+            const quantity = parseInt(input.value);
+            const price = parseFloat(input.dataset.price);
+            const id = input.dataset.id;
+            
+            if (!isNaN(quantity) && quantity > 0) {
+                total += quantity * price;
+                cart[id] = { quantity, price };
                 
                 // Tambahkan hidden input untuk form
                 itemsContainer.innerHTML += `
                     <input type="hidden" name="items[${id}][food_menu_id]" value="${id}">
-                    <input type="hidden" name="items[${id}][quantity]" value="${item.quantity}">
-                    <input type="hidden" name="items[${id}][price]" value="${item.price}">
+                    <input type="hidden" name="items[${id}][quantity]" value="${quantity}">
+                    <input type="hidden" name="items[${id}][price]" value="${price}">
                 `;
             } else {
-                delete cart[id]; // Hapus item jika quantity 0
+                delete cart[id];
             }
-        }
+        });
         
-        // Update tampilan total harga
-        const formattedTotal = new Intl.NumberFormat('id-ID').format(total);
-        totalPriceDisplay.textContent = `Total Harga: Rp${formattedTotal}`;
-        totalPriceInput.value = total;
+        totalPriceSpan.textContent = total.toLocaleString('id-ID');
+        hiddenTotalPriceInput.value = total;
     }
 
-    inputs.forEach(input => {
-        input.addEventListener('change', function (e) {
-            const id = e.target.dataset.id;
-            const price = parseFloat(e.target.dataset.price);
-            const name = e.target.dataset.name;
-            const quantity = parseInt(e.target.value, 10);
-            
-            cart[id] = { quantity, price, name };
-            updateCart();
-        });
+    itemQuantities.forEach(input => {
+        input.addEventListener('change', calculateTotalPrice);
+        input.addEventListener('keyup', calculateTotalPrice);
     });
 
-    orderForm.addEventListener('submit', function(e) {
-        if (Object.keys(cart).length === 0 || totalPriceInput.value == 0) {
-            e.preventDefault();
-            alert('Keranjang Anda masih kosong. Silakan pilih minimal 1 item.');
+    orderForm.addEventListener('submit', function(event) {
+        if (Object.keys(cart).length === 0 || hiddenTotalPriceInput.value == 0) {
+            alert('Anda harus memilih setidaknya satu item makanan.');
+            event.preventDefault();
         }
     });
+
+    calculateTotalPrice(); // Hitung total awal saat load
 });
 </script>
 @endsection
