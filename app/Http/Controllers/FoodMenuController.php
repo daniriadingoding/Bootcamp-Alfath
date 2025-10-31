@@ -4,10 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\FoodMenu;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // Pastikan ini ada
+use Illuminate\Support\Facades\Storage;
 
 class FoodMenuController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:admin')->only([
+            'create', 
+            'store', 
+            'edit', 
+            'update', 
+            'destroy'
+        ]);
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -53,6 +65,7 @@ class FoodMenuController extends Controller
      */
     public function show(FoodMenu $foodMenu)
     {
+        // View ini tidak kita buat, tapi tidak masalah
         return view('foodmenu.show', compact('foodMenu'));
     }
 
