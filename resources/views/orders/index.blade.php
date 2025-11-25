@@ -70,6 +70,7 @@
                                         if ($order->status == 'pending') $badgeClass = 'bg-yellow-100 text-yellow-800';
                                         if ($order->status == 'onprogress') $badgeClass = 'bg-blue-100 text-blue-800';
                                         if ($order->status == 'done') $badgeClass = 'bg-green-100 text-green-800';
+                                        if ($order->status == 'cancelled') $badgeClass = 'bg-red-100 text-red-800'; // Warna Merah untuk Cancelled
                                     @endphp
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
                                         {{ ucfirst($order->status) }}
@@ -86,6 +87,7 @@
                                             <option value="pending" @if($order->status == 'pending') selected disabled @endif>Pending</option>
                                             <option value="onprogress" @if($order->status == 'onprogress') selected @endif>On Progress</option>
                                             <option value="done" @if($order->status == 'done') selected @endif>Done</option>
+                                            <option value="cancelled" @if($order->status == 'cancelled') selected @endif>Cancelled</option>
                                         </select>
                                     </form>
                                 </td>
