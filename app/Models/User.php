@@ -22,6 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'address',   // <-- Tambahan Wajib
+        'latitude',  // <-- Tambahan Wajib
+        'longitude', // <-- Tambahan Wajib
     ];
 
     /**
@@ -45,8 +48,38 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => 'string',
+            'latitude' => 'float', // Casting agar terbaca sebagai angka
+            'longitude' => 'float', // Casting agar terbaca sebagai angka
         ];
     }
+
+    /**
+     * Relasi ke FoodMenu
+     */
+    public function foodMenus()
+    {
+        return $this->hasMany(FoodMenu::class, 'user_id');
+    }
+
+    /**
+     * Scope untuk mencari merchant terdekat (Haversine Formula)
+     */
+    public function scopeNearby($query, $latitude, $longitude, $radius = 10)
+    {
+        return $query->select('*')
+            ->selectRaw(
+                '( 6371 * acos( cos( radians(?) ) *
+                  cos( radians( latitude ) ) *
+                  cos( radians( longitude ) - radians(?) ) +
+                  sin( radians(?) ) *
+                  sin( radians( latitude ) ) ) ) AS distance',
+                [$latitude, $longitude, $latitude]
+            )
+            ->where('role', 'merchant')
+            ->having('distance', '<', $radius)
+            ->orderBy('distance');
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -60,10 +93,5 @@ class User extends Authenticatable
     public function isCustomer(): bool
     {
         return $this->role === 'customer';
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
     }
 }

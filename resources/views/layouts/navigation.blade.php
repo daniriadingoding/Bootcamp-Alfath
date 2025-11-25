@@ -17,15 +17,32 @@
                         <x-nav-link :href="route('orders.create')" :active="request()->routeIs('orders.create')">
                             {{ __('Pesan Menu') }}
                         </x-nav-link>
-                    @else
+                        
+                        {{-- Fitur Geolocation --}}
+                        <x-nav-link :href="route('nearby.index')" :active="request()->routeIs('nearby.index')">
+                            {{ __('Cari Restoran') }}
+                        </x-nav-link>
+                    @endif
+
+                    @if (Auth::user()->isMerchant())
                         <x-nav-link :href="route('foodmenu.index')" :active="request()->routeIs('foodmenu.*')">
                             {{ __('Kelola Menu') }}
                         </x-nav-link>
                     @endif
 
-                    <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
-                        {{ __('Pesanan Saya') }}
-                    </x-nav-link>
+                    @if (Auth::user()->isAdmin())
+                        {{-- Fitur Admin Kelola Lokasi Merchant --}}
+                        <x-nav-link :href="route('admin.merchants.index')" :active="request()->routeIs('admin.merchants.*')">
+                            {{ __('Kelola Merchant') }}
+                        </x-nav-link>
+                    @endif
+
+                    {{-- Tampilkan untuk Customer & Merchant (Admin mungkin tidak butuh ini kecuali mau liat semua) --}}
+                    @if (!Auth::user()->isAdmin())
+                        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
+                            {{ __('Pesanan Saya') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -82,15 +99,29 @@
                 <x-responsive-nav-link :href="route('orders.create')" :active="request()->routeIs('orders.create')">
                     {{ __('Pesan Menu') }}
                 </x-responsive-nav-link>
-            @else
+
+                <x-responsive-nav-link :href="route('nearby.index')" :active="request()->routeIs('nearby.index')">
+                    {{ __('Cari Restoran') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if (Auth::user()->isMerchant())
                 <x-responsive-nav-link :href="route('foodmenu.index')" :active="request()->routeIs('foodmenu.*')">
                     {{ __('Kelola Menu') }}
                 </x-responsive-nav-link>
             @endif
 
-            <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
-                {{ __('Pesanan Saya') }}
-            </x-responsive-nav-link>
+            @if (Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.merchants.index')" :active="request()->routeIs('admin.merchants.*')">
+                    {{ __('Kelola Merchant') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if (!Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
+                    {{ __('Pesanan Saya') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

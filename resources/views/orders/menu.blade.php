@@ -3,73 +3,88 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-200 mb-8">Pilih Menu Makanan Anda</h1>
+        
+        {{-- Update Judul Dinamis --}}
+        <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-200 mb-2">
+            @if(isset($merchant))
+                Menu dari: <span class="text-indigo-600">{{ $merchant->name }}</span>
+            @else
+                Pilih Merchant Terlebih Dahulu
+            @endif
+        </h1>
+        
+        {{-- Tampilkan Alamat Merchant jika ada --}}
+        @if(isset($merchant) && $merchant->address)
+            <p class="text-center text-gray-500 dark:text-gray-400 mb-8">
+                📍 {{ $merchant->address }}
+            </p>
+        @endif
         
         <form action="{{ route('orders.store') }}" method="POST" id="orderForm">
             @csrf
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($foodItems as $foodItem)
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex flex-col h-full">
-                    <img src="{{ $foodItem->image ? Storage::url($foodItem->image) : 'https://via.placeholder.com/300x200' }}" 
-                         class="w-full h-48 object-cover" 
-                         alt="{{ $foodItem->name }}">
-                    
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h5 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{{ $foodItem->name }}</h5>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4 flex-grow">{{ $foodItem->description }}</p>
-                        
-                        <div class="mt-auto">
-                            <p class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">
-                                Rp{{ number_format($foodItem->price, 0, ',', '.') }}
-                            </p>
-                            
-                            <div class="flex items-center">
-                                <span class="text-gray-700 dark:text-gray-300 mr-3 text-sm">Jumlah</span>
-                                <input type="number" 
-                                       class="item-quantity w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" 
-                                       value="0" min="0" 
-                                       data-id="{{ $foodItem->id }}"
-                                       data-price="{{ $foodItem->price }}"
-                                       data-name="{{ $foodItem->name }}">
+            
+            {{-- Cek jika menu kosong --}}
+            @if($foodItems->isEmpty())
+                <div class="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <p class="text-gray-500">Belum ada menu tersedia di merchant ini.</p>
+                    <a href="{{ route('nearby.index') }}" class="text-indigo-600 hover:underline mt-2 inline-block">Kembali ke Peta</a>
+                </div>
+            @else
+                {{-- Grid Menu Makanan (Kode Loop yang sudah ada) --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($foodItems as $foodItem)
+                        {{-- ... (kode kartu menu Anda tetap sama di sini) ... --}}
+                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex flex-col h-full">
+                            <img src="{{ $foodItem->image ? Storage::url($foodItem->image) : 'https://via.placeholder.com/300x200' }}" 
+                                 class="w-full h-48 object-cover" alt="{{ $foodItem->name }}">
+                            <div class="p-6 flex flex-col flex-grow">
+                                <h5 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{{ $foodItem->name }}</h5>
+                                <p class="text-gray-600 dark:text-gray-400 mb-4 flex-grow">{{ $foodItem->description }}</p>
+                                <div class="mt-auto">
+                                    <p class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">
+                                        Rp{{ number_format($foodItem->price, 0, ',', '.') }}
+                                    </p>
+                                    <div class="flex items-center">
+                                        <span class="text-gray-700 dark:text-gray-300 mr-3 text-sm">Jumlah</span>
+                                        <input type="number" class="item-quantity w-full rounded-md border-gray-300 dark:bg-gray-900 dark:text-white" 
+                                               value="0" min="0" 
+                                               data-id="{{ $foodItem->id }}"
+                                               data-price="{{ $foodItem->price }}">
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            {{-- ... Sisa kode form (Total Harga, Alamat, Script JS) tetap sama ... --}}
+            <hr class="my-8 border-gray-300 dark:border-gray-700">
+            <div id="items-container"></div>
+            <input type="hidden" name="total_price" id="hiddenTotalPrice" value="0">
+            
+            {{-- Hanya tampilkan tombol pesan jika ada menu --}}
+            @if(!$foodItems->isEmpty())
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-4">
+                    <div class="p-6">
+                        <div class="mb-6">
+                            <label for="address" class="block font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">Alamat Pengiriman:</label>
+                            <textarea name="address" id="address" class="w-full rounded-md border-gray-300 dark:bg-gray-900 dark:text-white" rows="3" required>{{ old('address') }}</textarea>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-center">
+                            <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-0">
+                                Total Harga: Rp<span id="totalPrice">0</span>
+                            </h4>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500">
+                                Pesan Sekarang
+                            </button>
                         </div>
                     </div>
                 </div>
-                @endforeach
-            </div>
-            
-            <hr class="my-8 border-gray-300 dark:border-gray-700">
-
-            <div id="items-container"></div>
-            <input type="hidden" name="total_price" id="hiddenTotalPrice" value="0">
-
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-4">
-                <div class="p-6">
-                    <div class="mb-6">
-                        <label for="address" class="block font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">Alamat Pengiriman:</label>
-                        <textarea name="address" id="address" 
-                                  class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" 
-                                  rows="3" required>{{ old('address') }}</textarea>
-                        @error('address')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row justify-between items-center">
-                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-0">
-                            Total Harga: Rp<span id="totalPrice">0</span>
-                        </h4>
-                        <button type="submit" 
-                                class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 text-lg">
-                            Pesan Sekarang
-                        </button>
-                    </div>
-                </div>
-            </div>
+            @endif
         </form>
     </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const orderForm = document.getElementById('orderForm');

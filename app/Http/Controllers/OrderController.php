@@ -7,7 +7,7 @@ use App\Models\OrderItem;
 use App\Models\FoodMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 class OrderController extends Controller
 {
     public function __construct()
@@ -44,8 +44,23 @@ class OrderController extends Controller
 
     public function create()
     {
-        $foodItems = FoodMenu::all();
-        return view('orders.menu', compact('foodItems')); 
+// 1. Cek apakah ada merchant_id di URL
+    if ($request->has('merchant_id')) {
+        $merchantId = $request->merchant_id;
+        
+        // Ambil menu HANYA milik merchant tersebut
+        $foodItems = FoodMenu::where('user_id', $merchantId)->get();
+        
+        // (Opsional) Ambil data merchant untuk ditampilkan di judul
+        $merchant = User::find($merchantId);
+    } else {
+        // Jika tidak ada merchant yang dipilih, tampilkan kosong atau semua (sesuai kebijakan)
+        // Disini kita buat kosong agar user harus pilih merchant dulu
+        $foodItems = collect(); 
+        $merchant = null;
+    }
+
+    return view('orders.menu', compact('foodItems', 'merchant'));
     }
 
     public function store(Request $request)

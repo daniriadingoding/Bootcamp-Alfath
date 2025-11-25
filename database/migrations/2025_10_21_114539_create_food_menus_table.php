@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('food_menus', function (Blueprint $table) {
             $table->id();
+            // Tambahkan user_id untuk relasi ke tabel users (Merchant)
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
