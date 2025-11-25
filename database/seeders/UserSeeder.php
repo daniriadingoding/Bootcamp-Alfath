@@ -14,23 +14,61 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::Create([
-            'name'=>'Admin User',
+        // 1. Buat Akun Admin
+        User::create([
+            'name' => 'Admin User',
             'email' => 'admin@contoh.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
-        User::Create([
-            'name'=>'Customer User',
+
+        // 2. Buat Akun Customer
+        User::create([
+            'name' => 'Customer User',
             'email' => 'customer@contoh.com',
-            'password' => Hash ::make('password'),
+            'password' => Hash::make('password'),
             'role' => 'customer',
         ]);
-        User::Create([
-            'name'=>'Merchant User',
-            'email' => 'Merchant@contoh.com',
-            'password' => Hash ::make('password'),
+
+        // 3. Buat Beberapa Merchant dengan Lokasi (Area Bojongsoang/Bandung)
+        User::create([
+            'name' => 'Ayam Geprek Bojong',
+            'email' => 'geprek@contoh.com',
+            'password' => Hash::make('password'),
             'role' => 'merchant',
+            'address' => 'Jl. Telekomunikasi No. 1, Bojongsoang',
+            'latitude' => -6.974001, 
+            'longitude' => 107.630348, 
+        ]);
+
+        User::create([
+            'name' => 'Nasi Goreng Mas Yono',
+            'email' => 'nasgor@contoh.com',
+            'password' => Hash::make('password'),
+            'role' => 'merchant',
+            'address' => 'Jl. Raya Bojongsoang No. 108',
+            'latitude' => -6.976500, 
+            'longitude' => 107.632000, 
+        ]);
+
+        User::create([
+            'name' => 'Sate Padang Pagi Sore',
+            'email' => 'sate@contoh.com',
+            'password' => Hash::make('password'),
+            'role' => 'merchant',
+            'address' => 'Jl. Batununggal Indah Raya',
+            'latitude' => -6.960000, 
+            'longitude' => 107.625000, 
+        ]);
+
+        User::create([
+            'name' => 'Merchant Baru',
+            'email' => 'new@contoh.com',
+            'password' => Hash::make('password'),
+            'role' => 'merchant',
+            'address' => null,
+            'latitude' => null,
+            'longitude' => null,
         ]);
     }
 }

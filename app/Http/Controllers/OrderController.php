@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\FoodMenu;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -34,7 +34,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:onprogress,done',
+            'status' => 'required|in:onprogress,done,cancelled', 
         ]);
 
         $order->update(['status' => $validated['status']]);
@@ -42,10 +42,23 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Status pesanan berhasil diperbarui.');
     }
 
-    public function create()
+    public function create(Request $request) 
     {
-        $foodItems = FoodMenu::all();
-        return view('orders.menu', compact('foodItems')); 
+        // Cek apakah ada merchant_id di URL
+        if ($request->has('merchant_id')) {
+            $merchantId = $request->merchant_id;
+            
+            // Ambil menu HANYA milik merchant tersebut
+            $foodItems = FoodMenu::where('user_id', $merchantId)->get();
+            
+            // Ambil data merchant untuk ditampilkan di judul
+            $merchant = User::find($merchantId);
+        } else {
+            $foodItems = collect(); 
+            $merchant = null;
+        }
+    
+        return view('orders.menu', compact('foodItems', 'merchant'));
     }
 
     public function store(Request $request)
@@ -75,7 +88,7 @@ class OrderController extends Controller
             ]);
         }
 
-        return redirect()->route('orders.show', $order); // [cite: 137]
+        return redirect()->route('orders.show', $order);
     }
 
     public function show(Order $order)
