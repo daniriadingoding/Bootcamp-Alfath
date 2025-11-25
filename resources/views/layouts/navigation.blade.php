@@ -14,11 +14,8 @@
                     </x-nav-link>
 
                     @if (Auth::user()->isCustomer())
-                        <x-nav-link :href="route('orders.create')" :active="request()->routeIs('orders.create')">
-                            {{ __('Pesan Menu') }}
-                        </x-nav-link>
+                        {{-- HAPUS TOMBOL 'PESAN MENU' DISINI --}}
                         
-                        {{-- Fitur Geolocation --}}
                         <x-nav-link :href="route('nearby.index')" :active="request()->routeIs('nearby.index')">
                             {{ __('Cari Restoran') }}
                         </x-nav-link>
@@ -31,13 +28,11 @@
                     @endif
 
                     @if (Auth::user()->isAdmin())
-                        {{-- Fitur Admin Kelola Lokasi Merchant --}}
                         <x-nav-link :href="route('admin.merchants.index')" :active="request()->routeIs('admin.merchants.*')">
                             {{ __('Kelola Merchant') }}
                         </x-nav-link>
                     @endif
 
-                    {{-- Tampilkan untuk Customer & Merchant (Admin mungkin tidak butuh ini kecuali mau liat semua) --}}
                     @if (!Auth::user()->isAdmin())
                         <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                             {{ __('Pesanan Saya') }}
@@ -96,9 +91,7 @@
             </x-responsive-nav-link>
 
             @if (Auth::user()->isCustomer())
-                <x-responsive-nav-link :href="route('orders.create')" :active="request()->routeIs('orders.create')">
-                    {{ __('Pesan Menu') }}
-                </x-responsive-nav-link>
+                {{-- HAPUS LINK RESPONSIVE 'PESAN MENU' DISINI --}}
 
                 <x-responsive-nav-link :href="route('nearby.index')" :active="request()->routeIs('nearby.index')">
                     {{ __('Cari Restoran') }}

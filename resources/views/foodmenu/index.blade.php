@@ -7,11 +7,9 @@
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold">{{ __('Daftar Menu Makanan') }}</h2>
-                    @if(Auth::user()->isAdmin())
                     <a href="{{ route('foodmenu.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                         {{ __('Tambah Menu Baru') }}
                     </a>
-                    @endif
                 </div>
 
                 @if (session('success'))
@@ -27,11 +25,14 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">#</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Gambar</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Deskripsi</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Harga</th>
+                                
+                                {{-- KOLOM KHUSUS ADMIN --}}
                                 @if(Auth::user()->isAdmin())
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Pemilik (Merchant)</th>
                                 @endif
+
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Harga</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -40,35 +41,39 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($foodMenu->image)
-                                    <img src="{{ Storage::url($foodMenu->image) }}" alt="{{ $foodMenu->name }}" class="w-24 h-24 object-cover rounded-md">
+                                    <img src="{{ Storage::url($foodMenu->image) }}" alt="{{ $foodMenu->name }}" class="w-16 h-16 object-cover rounded-md">
                                     @else
-                                    <span class="text-sm text-gray-400 italic">No Image</span>
+                                    <span class="text-xs text-gray-400 italic">No Image</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $foodMenu->name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">{{ $foodMenu->description }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Rp {{ number_format($foodMenu->price, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ $foodMenu->name }}
+                                    <div class="text-xs text-gray-500 font-normal truncate max-w-[150px]">{{ $foodMenu->description }}</div>
+                                </td>
+
+                                {{-- DATA MERCHANT KHUSUS ADMIN --}}
                                 @if(Auth::user()->isAdmin())
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400">
+                                        {{ $foodMenu->user->name ?? 'Unknown' }}
+                                    </td>
+                                @endif
+
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Rp {{ number_format($foodMenu->price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex flex-col space-y-2">
-                                        <a href="{{ route('foodmenu.edit', $foodMenu->id) }}" class="inline-flex justify-center items-center px-3 py-1 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                            Edit
-                                        </a>
-                                        <form action="{{ route('foodmenu.destroy', $foodMenu->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus menu ini?');">
+                                    <div class="flex space-x-2">
+                                        <a href="{{ route('foodmenu.edit', $foodMenu->id) }}" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300">Edit</a>
+                                        <form action="{{ route('foodmenu.destroy', $foodMenu->id) }}" method="POST" onsubmit="return confirm('Yakin hapus menu ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="w-full inline-flex justify-center items-center px-3 py-1 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                                Hapus
-                                            </button>
+                                            <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Hapus</button>
                                         </form>
                                     </div>
                                 </td>
-                                @endif
                             </tr>
                             @empty
                             <tr>
                                 <td colspan="{{ Auth::user()->isAdmin() ? '6' : '5' }}" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-400">
-                                    Tidak ada data menu makanan.
+                                    Belum ada menu makanan.
                                 </td>
                             </tr>
                             @endforelse

@@ -10,6 +10,26 @@
                 <form action="{{ route('foodmenu.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     
+                    {{-- FITUR KHUSUS ADMIN: PILIH MERCHANT --}}
+                    {{-- Pastikan Anda Login sebagai Admin agar dropdown ini muncul --}}
+                    @if(Auth::user()->isAdmin())
+                        <div>
+                            <label for="merchant_id" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Pemilik Menu (Merchant)</label>
+                            <select id="merchant_id" name="merchant_id" class="block mt-1 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" required>
+                                <option value="" disabled selected>-- Pilih Merchant --</option>
+                                {{-- Pastikan Controller mengirimkan variabel $merchants --}}
+                                @foreach($merchants as $merchant)
+                                    <option value="{{ $merchant->id }}" {{ old('merchant_id') == $merchant->id ? 'selected' : '' }}>
+                                        {{ $merchant->name }} ({{ $merchant->address ?? 'Lokasi Belum Ada' }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('merchant_id')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endif
+
                     <div>
                         <label for="name" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Nama Makanan</label>
                         <input id="name" class="block mt-1 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" type="text" name="name" value="{{ old('name') }}" required autofocus />
