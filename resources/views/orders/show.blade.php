@@ -15,19 +15,31 @@
                         <p class="mb-2"><strong class="font-medium text-gray-700 dark:text-gray-300">Tanggal Pesan:</strong> {{ $order->created_at->format('d M Y H:i') }}</p>
                         <p class="mb-2"><strong class="font-medium text-gray-700 dark:text-gray-300">Alamat Pengiriman:</strong> {{ $order->address }}</p>
                     </div>
+                    
                     <div class="text-left md:text-right">
                         <div class="mb-4">
                             <strong class="font-medium text-gray-700 dark:text-gray-300 block mb-1">Status:</strong>
+                            
                             @if ($order->status == 'pending')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Menunggu Konfirmasi</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                    Menunggu Konfirmasi
+                                </span>
                             @elseif ($order->status == 'onprogress')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Sedang Diproses</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    Sedang Diproses
+                                </span>
                             @elseif ($order->status == 'done')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Selesai</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                    Selesai
+                                </span>
                             @elseif ($order->status == 'cancelled')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Dibatalkan</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                    Dibatalkan
+                                </span>
                             @else
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">{{ ucfirst($order->status) }}</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                    {{ ucfirst($order->status) }}
+                                </span>
                             @endif
                         </div>
                         <h4 class="text-xl font-bold text-gray-900 dark:text-white">Total Harga: Rp{{ number_format($order->total_price, 0, ',', '.') }}</h4>
