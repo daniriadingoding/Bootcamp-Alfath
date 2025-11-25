@@ -14,14 +14,12 @@
                     </x-nav-link>
 
                     @if (Auth::user()->isCustomer())
-                        {{-- HAPUS TOMBOL 'PESAN MENU' DISINI --}}
-                        
                         <x-nav-link :href="route('nearby.index')" :active="request()->routeIs('nearby.index')">
                             {{ __('Cari Restoran') }}
                         </x-nav-link>
                     @endif
 
-                    @if (Auth::user()->isMerchant())
+                    @if (Auth::user()->isMerchant() || Auth::user()->isAdmin())
                         <x-nav-link :href="route('foodmenu.index')" :active="request()->routeIs('foodmenu.*')">
                             {{ __('Kelola Menu') }}
                         </x-nav-link>
@@ -91,14 +89,12 @@
             </x-responsive-nav-link>
 
             @if (Auth::user()->isCustomer())
-                {{-- HAPUS LINK RESPONSIVE 'PESAN MENU' DISINI --}}
-
                 <x-responsive-nav-link :href="route('nearby.index')" :active="request()->routeIs('nearby.index')">
                     {{ __('Cari Restoran') }}
                 </x-responsive-nav-link>
             @endif
 
-            @if (Auth::user()->isMerchant())
+            @if (Auth::user()->isMerchant() || Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('foodmenu.index')" :active="request()->routeIs('foodmenu.*')">
                     {{ __('Kelola Menu') }}
                 </x-responsive-nav-link>

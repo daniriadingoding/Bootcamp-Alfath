@@ -16,17 +16,11 @@ class Order extends Model
         'address',
     ];
 
-    /**
-     * Get the user that owns the order.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the items for the order.
-     */
     public function items()
     {
         return $this->hasMany(OrderItem::class);

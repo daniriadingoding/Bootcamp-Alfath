@@ -81,7 +81,7 @@
         });
     }
 
-    // 4. Event Klik Peta
+    // 4. Klik Peta
     map.on('click', function(e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;

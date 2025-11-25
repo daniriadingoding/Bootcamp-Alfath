@@ -3,8 +3,6 @@
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        
-        {{-- Update Judul Dinamis --}}
         <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-200 mb-2">
             @if(isset($merchant))
                 Menu dari: <span class="text-indigo-600">{{ $merchant->name }}</span>
@@ -13,7 +11,6 @@
             @endif
         </h1>
         
-        {{-- Tampilkan Alamat Merchant jika ada --}}
         @if(isset($merchant) && $merchant->address)
             <p class="text-center text-gray-500 dark:text-gray-400 mb-8">
                 📍 {{ $merchant->address }}
@@ -23,17 +20,14 @@
         <form action="{{ route('orders.store') }}" method="POST" id="orderForm">
             @csrf
             
-            {{-- Cek jika menu kosong --}}
             @if($foodItems->isEmpty())
                 <div class="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow">
                     <p class="text-gray-500">Belum ada menu tersedia di merchant ini.</p>
                     <a href="{{ route('nearby.index') }}" class="text-indigo-600 hover:underline mt-2 inline-block">Kembali ke Peta</a>
                 </div>
             @else
-                {{-- Grid Menu Makanan (Kode Loop yang sudah ada) --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($foodItems as $foodItem)
-                        {{-- ... (kode kartu menu Anda tetap sama di sini) ... --}}
                         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex flex-col h-full">
                             <img src="{{ $foodItem->image ? Storage::url($foodItem->image) : 'https://via.placeholder.com/300x200' }}" 
                                  class="w-full h-48 object-cover" alt="{{ $foodItem->name }}">
@@ -57,13 +51,10 @@
                     @endforeach
                 </div>
             @endif
-
-            {{-- ... Sisa kode form (Total Harga, Alamat, Script JS) tetap sama ... --}}
             <hr class="my-8 border-gray-300 dark:border-gray-700">
             <div id="items-container"></div>
             <input type="hidden" name="total_price" id="hiddenTotalPrice" value="0">
             
-            {{-- Hanya tampilkan tombol pesan jika ada menu --}}
             @if(!$foodItems->isEmpty())
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-4">
                     <div class="p-6">

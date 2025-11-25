@@ -31,8 +31,6 @@ class UserSeeder extends Seeder
         ]);
 
         // 3. Buat Beberapa Merchant dengan Lokasi (Area Bojongsoang/Bandung)
-        
-        // Merchant 1: Lokasi dekat TULT
         User::create([
             'name' => 'Ayam Geprek Bojong',
             'email' => 'geprek@contoh.com',
@@ -43,7 +41,6 @@ class UserSeeder extends Seeder
             'longitude' => 107.630348, 
         ]);
 
-        // Merchant 2: Lokasi agak ke selatan (PBA)
         User::create([
             'name' => 'Nasi Goreng Mas Yono',
             'email' => 'nasgor@contoh.com',
@@ -54,7 +51,6 @@ class UserSeeder extends Seeder
             'longitude' => 107.632000, 
         ]);
 
-        // Merchant 3: Lokasi agak ke utara (Batununggal)
         User::create([
             'name' => 'Sate Padang Pagi Sore',
             'email' => 'sate@contoh.com',
@@ -65,9 +61,8 @@ class UserSeeder extends Seeder
             'longitude' => 107.625000, 
         ]);
 
-        // Merchant 4: Merchant tanpa lokasi (untuk tes validasi)
         User::create([
-            'name' => 'Merchant Baru (Belum Setup Lokasi)',
+            'name' => 'Merchant Baru',
             'email' => 'new@contoh.com',
             'password' => Hash::make('password'),
             'role' => 'merchant',

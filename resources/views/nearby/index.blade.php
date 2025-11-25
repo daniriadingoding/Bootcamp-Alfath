@@ -4,13 +4,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
-    /* Pastikan peta memenuhi sisa layar */
     #map { height: calc(100vh - 65px); z-index: 0; }
-    
-    /* Panel melayang di atas peta */
     .floating-panel { z-index: 1000; }
-    
-    /* Custom scrollbar agar rapi */
     .merchant-list::-webkit-scrollbar { width: 6px; }
     .merchant-list::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
 </style>
@@ -148,7 +143,7 @@
                 
                 // Reset tampilan
                 listContainer.innerHTML = '';
-                markers.forEach(m => map.removeLayer(m)); // Hapus marker lama
+                markers.forEach(m => map.removeLayer(m));
                 markers = [];
 
                 if(data.merchants && data.merchants.length > 0) {

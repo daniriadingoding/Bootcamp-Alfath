@@ -51,18 +51,16 @@ class FoodMenuController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ];
 
-        // Jika Admin, WAJIB pilih merchant_id dari form
         if (Auth::user()->isAdmin()) {
             $rules['merchant_id'] = 'required|exists:users,id';
         }
 
         $validatedData = $request->validate($rules);
 
-        // Tentukan user_id (Pemilik Menu)
         if (Auth::user()->isAdmin()) {
             $userId = $request->merchant_id;
         } else {
-            $userId = Auth::id(); // Merchant otomatis pakai ID sendiri
+            $userId = Auth::id();
         }
 
         $dataToSave = [
@@ -83,7 +81,7 @@ class FoodMenuController extends Controller
 
     public function edit(FoodMenu $foodMenu)
     {
-        // Keamanan: Cegah Merchant mengedit menu orang lain
+        // Merchant ga boleh  mengedit menu orang lain
         if (!Auth::user()->isAdmin() && $foodMenu->user_id !== Auth::id()) {
             abort(403, 'Unauthorized access');
         }
@@ -98,7 +96,7 @@ class FoodMenuController extends Controller
 
     public function update(Request $request, FoodMenu $foodMenu)
     {
-        // Keamanan: Cegah Merchant mengupdate menu orang lain
+        // Merchant ga boleh mengupdate menu orang lain
         if (!Auth::user()->isAdmin() && $foodMenu->user_id !== Auth::id()) {
             abort(403, 'Unauthorized access');
         }

@@ -22,9 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'address',   // <-- Tambahan Wajib
-        'latitude',  // <-- Tambahan Wajib
-        'longitude', // <-- Tambahan Wajib
+        'address',
+        'latitude',
+        'longitude',
     ];
 
     /**
@@ -48,22 +48,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => 'string',
-            'latitude' => 'float', // Casting agar terbaca sebagai angka
-            'longitude' => 'float', // Casting agar terbaca sebagai angka
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 
-    /**
-     * Relasi ke FoodMenu
-     */
     public function foodMenus()
     {
         return $this->hasMany(FoodMenu::class, 'user_id');
     }
 
-    /**
-     * Scope untuk mencari merchant terdekat (Haversine Formula)
-     */
     public function scopeNearby($query, $latitude, $longitude, $radius = 10)
     {
         return $query->select('*')

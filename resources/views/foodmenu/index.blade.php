@@ -26,7 +26,6 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Gambar</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama</th>
                                 
-                                {{-- KOLOM KHUSUS ADMIN --}}
                                 @if(Auth::user()->isAdmin())
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Pemilik (Merchant)</th>
                                 @endif
@@ -51,7 +50,6 @@
                                     <div class="text-xs text-gray-500 font-normal truncate max-w-[150px]">{{ $foodMenu->description }}</div>
                                 </td>
 
-                                {{-- DATA MERCHANT KHUSUS ADMIN --}}
                                 @if(Auth::user()->isAdmin())
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 dark:text-indigo-400">
                                         {{ $foodMenu->user->name ?? 'Unknown' }}

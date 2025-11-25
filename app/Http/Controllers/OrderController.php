@@ -43,7 +43,7 @@ class OrderController extends Controller
 
     public function create(Request $request) 
 {
-    // 1. Cek apakah ada merchant_id di URL
+    // Cek apakah ada merchant_id di URL
     if ($request->has('merchant_id')) {
         $merchantId = $request->merchant_id;
         
@@ -87,7 +87,7 @@ class OrderController extends Controller
             ]);
         }
 
-        return redirect()->route('orders.show', $order); // [cite: 137]
+        return redirect()->route('orders.show', $order);
     }
 
     public function show(Order $order)

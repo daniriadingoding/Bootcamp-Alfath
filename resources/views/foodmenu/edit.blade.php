@@ -11,7 +11,6 @@
                     @csrf
                     @method('PUT')
                     
-                    {{-- FITUR KHUSUS ADMIN: PILIH MERCHANT --}}
                     @if(Auth::user()->isAdmin())
                         <div>
                             <label for="merchant_id" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Pemilik Menu (Merchant)</label>
