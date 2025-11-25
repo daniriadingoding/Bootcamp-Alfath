@@ -1,53 +1,65 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Edit Menu Makanan: {{ $foodMenu->name }}</div>
-                <div class="card-body">
-                    <form action="{{ route('foodmenu.update', $foodMenu->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nama Makanan</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $foodMenu->name) }}" required>
-                            @error('name')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description', $foodMenu->description) }}</textarea>
-                            @error('description')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="price" class="form-label">Harga</label>
-                            <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price', $foodMenu->price) }}" required>
-                            @error('price')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Gambar (biarkan kosong jika tidak ingin mengubah)</label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
-                            @if ($foodMenu->image)
-                                <div class="mt-2">
-                                    <p>Gambar saat ini:</p>
-                                    <img src="{{ Storage::url($foodMenu->image) }}" alt="{{ $foodMenu->name }}" width="150" class="img-thumbnail">
-                                </div>
-                            @endif
-                            @error('image')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update Menu</button>
-                        <a href="{{ route('foodmenu.index') }}" class="btn btn-secondary ms-2">Batal</a>
-                    </form>
-                </div>
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">Edit Menu Makanan: {{ $foodMenu->name }}</h2>
+
+                <form action="{{ route('foodmenu.update', $foodMenu->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div>
+                        <label for="name" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Nama Makanan</label>
+                        <input id="name" class="block mt-1 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" type="text" name="name" value="{{ old('name', $foodMenu->name) }}" required autofocus />
+                        @error('name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="description" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Deskripsi</label>
+                        <textarea id="description" name="description" rows="3" class="block mt-1 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">{{ old('description', $foodMenu->description) }}</textarea>
+                        @error('description')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="price" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Harga</label>
+                        <input id="price" class="block mt-1 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" type="number" step="0.01" name="price" value="{{ old('price', $foodMenu->price) }}" required />
+                        @error('price')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="image" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Gambar (biarkan kosong jika tidak ingin mengubah)</label>
+                        <input id="image" type="file" name="image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 mt-1" />
+                        
+                        @if ($foodMenu->image)
+                            <div class="mt-4">
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Gambar saat ini:</p>
+                                <img src="{{ Storage::url($foodMenu->image) }}" alt="{{ $foodMenu->name }}" class="w-32 h-32 object-cover rounded-md border border-gray-300 dark:border-gray-600">
+                            </div>
+                        @endif
+                        
+                        @error('image')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Update Menu
+                        </button>
+                        <a href="{{ route('foodmenu.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            Batal
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
