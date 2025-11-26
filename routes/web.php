@@ -6,6 +6,7 @@ use App\Http\Controllers\FoodMenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NearbyController;
 use App\Http\Controllers\AdminMerchantController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,6 +34,9 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/explore-nearby', [NearbyController::class, 'index'])->name('nearby.index');
     Route::get('/api/nearby-merchants', [NearbyController::class, 'search'])->name('nearby.search');
+
+    Route::get('/orders/{order}/payment', [PaymentController::class, 'createPayment'])->name('payment.create');
+    Route::get('/orders/{order}/payment/success', [PaymentController::class, 'success'])->name('payment.success');
 });
 
 Route::middleware(['role:admin'])->group(function () {

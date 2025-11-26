@@ -64,9 +64,8 @@
     }).addTo(map);
 
     let userMarker, radiusCircle;
-    let markers = []; // Array untuk menyimpan marker merchant
+    let markers = [];
 
-    // Custom Icons
     const userIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -122,7 +121,7 @@
 
         // Lingkaran Radius
         radiusCircle = L.circle([lat, lng], {
-            color: '#4f46e5', // Indigo-600
+            color: '#4f46e5',
             fillColor: '#6366f1',
             fillOpacity: 0.1,
             weight: 1,
@@ -143,7 +142,7 @@
                 
                 // Reset tampilan
                 listContainer.innerHTML = '';
-                markers.forEach(m => map.removeLayer(m));
+                markers.forEach(m => map.removeLayer(m)); // Hapus marker lama
                 markers = [];
 
                 if(data.merchants && data.merchants.length > 0) {
@@ -152,7 +151,7 @@
                     document.getElementById('status').textContent = `Menampilkan ${data.merchants.length} merchant dalam radius ${radius}km.`;
 
                     data.merchants.forEach(merchant => {
-                        // A. Tambah Marker di Peta
+                        // Tambah Marker di Peta
                         const marker = L.marker([merchant.latitude, merchant.longitude], {icon: merchantIcon})
                             .addTo(map)
                             .bindPopup(`
@@ -160,7 +159,9 @@
                                     <h3 class="font-bold text-sm">${merchant.name}</h3>
                                     <p class="text-xs mb-1">${parseFloat(merchant.distance).toFixed(2)} km</p>
                                     
-                                    <a href="/orders/create?merchant_id=${merchant.id}" class="block bg-indigo-600 text-white text-xs px-2 py-1 rounded mt-1 hover:bg-indigo-700">
+                                    <a href="/orders/create?merchant_id=${merchant.id}" 
+                                       class="block bg-indigo-600 !text-white text-xs px-2 py-1 rounded mt-1 hover:bg-indigo-700"
+                                       style="color: white !important; text-decoration: none;">
                                         Lihat Menu
                                     </a>
                                 </div>
