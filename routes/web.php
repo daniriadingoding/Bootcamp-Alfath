@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NearbyController;
 use App\Http\Controllers\AdminMerchantController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AdminUserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,6 +44,10 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('/admin/merchants', [AdminMerchantController::class, 'index'])->name('admin.merchants.index');
     Route::get('/admin/merchants/{merchant}/edit', [AdminMerchantController::class, 'edit'])->name('admin.merchants.edit');
     Route::put('/admin/merchants/{merchant}', [AdminMerchantController::class, 'update'])->name('admin.merchants.update');
+
+    Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+    Route::get('/admin/users/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/admin/users/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
 });
 
 require __DIR__.'/auth.php';

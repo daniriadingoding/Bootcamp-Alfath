@@ -29,6 +29,9 @@
                         <x-nav-link :href="route('admin.merchants.index')" :active="request()->routeIs('admin.merchants.*')">
                             {{ __('Kelola Merchant') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Kelola User') }}
+                        </x-nav-link>
                     @endif
 
                     @if (!Auth::user()->isAdmin())
