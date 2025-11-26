@@ -22,12 +22,10 @@ class PaymentController extends Controller
 
     public function createPayment(Order $order)
     {
-        // Cek Pemilik
         if ($order->user_id !== Auth::id()) {
             abort(403, 'Akses ditolak');
         }
 
-        // Cek Status
         if ($order->payment_status === 'paid') {
             return redirect()->route('orders.show', $order)->with('error', 'Pesanan sudah dibayar.');
         }
@@ -43,7 +41,6 @@ class PaymentController extends Controller
                 ];
             }
 
-            // Transaction Details (Order ID Unik dengan Timestamp)
             $transactionDetails = [
                 'order_id' => 'ORDER-' . $order->id . '-' . time(),
                 'gross_amount' => (int) $order->total_price,
@@ -62,14 +59,12 @@ class PaymentController extends Controller
 
             $snapToken = Snap::getSnapToken($params);
 
-            // Simpan ke Database
             $order->update([
                 'payment_token' => $snapToken,
                 'payment_status' => 'pending',
                 'transaction_id' => $transactionDetails['order_id'],
             ]);
 
-            // Kirim data ke View
             return view('orders.payment', [
                 'order' => $order,
                 'snapToken' => $snapToken,
@@ -82,24 +77,24 @@ class PaymentController extends Controller
         }
     }
 
-    // Dipanggil setelah user selesai bayar di Midtrans
     public function success(Order $order)
     {
-        // Cek status langsung ke API Midtrans (agar valid)
         if ($order->transaction_id) {
             try {
                 $status = Transaction::status($order->transaction_id);
                 $this->updateOrderFromTransactionStatus($order, $status);
             } catch (\Exception $e) {
-                // Fallback jika cek gagal, anggap sukses dulu redirect
                 Log::error('Check status failed: ' . $e->getMessage());
             }
         }
+        
+        if ($order->payment_status == 'paid') {
+             return redirect()->route('orders.show', $order)->with('success', 'Pembayaran Berhasil! Terima kasih.');
+        }
 
-        return redirect()->route('orders.show', $order)->with('success', 'Transaksi selesai diproses.');
+        return redirect()->route('orders.show', $order)->with('info', 'Pembayaran sedang diproses.');
     }
 
-    // Helper untuk update status database berdasarkan respon Midtrans
     private function updateOrderFromTransactionStatus($order, $status)
     {
         $transactionStatus = $status->transaction_status;

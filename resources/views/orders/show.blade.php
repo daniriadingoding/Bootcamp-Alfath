@@ -4,6 +4,7 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         
+        {{-- Notifikasi --}}
         @if (session('success'))
             <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>
@@ -14,18 +15,26 @@
                 <span class="block sm:inline">{{ session('error') }}</span>
             </div>
         @endif
+        @if (session('info'))
+            <div class="mb-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('info') }}</span>
+            </div>
+        @endif
 
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            {{-- Header --}}
             <div class="px-6 py-4 bg-indigo-600 border-b border-indigo-600 flex justify-between items-center">
                 <h3 class="text-lg font-semibold text-white">Detail Pesanan #{{ $order->id }}</h3>
                 <span class="text-indigo-100 text-sm">{{ $order->created_at->format('d M Y, H:i') }}</span>
             </div>
             
             <div class="p-6 text-gray-900 dark:text-gray-100">
+                {{-- Informasi Utama --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-2">Informasi Pesanan</h4>
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-2">Informasi Pengiriman</h4>
                         
+                        {{-- Nama Merchant --}}
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
                             <span class="font-semibold">Toko (Merchant):</span> 
                             <span class="text-indigo-600 font-bold">{{ $order->items->first()->foodMenu->user->name ?? 'Unknown' }}</span>
@@ -38,10 +47,11 @@
                             <span class="font-semibold">Email:</span> {{ $order->user->email }}
                         </p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                            <span class="font-semibold">Alamat Pengiriman:</span> {{ $order->address }}
+                            <span class="font-semibold">Alamat:</span> {{ $order->address }}
                         </p>
                     </div>
                     
+                    {{-- Status & Total --}}
                     <div class="text-left md:text-right border-t md:border-t-0 pt-4 md:pt-0 border-gray-200 dark:border-gray-700">
                         <div class="mb-4 space-y-2">
                             <div>
@@ -82,6 +92,7 @@
                     </div>
                 </div>
 
+                {{-- Bagian Pembayaran (Hanya untuk Customer jika belum lunas) --}}
                 @if(Auth::user()->isCustomer() && $order->payment_status == 'pending' && $order->status != 'cancelled')
                     <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
                         <div class="flex justify-between items-center flex-wrap gap-4">
@@ -99,6 +110,7 @@
 
                 <hr class="my-6 border-gray-200 dark:border-gray-700">
 
+                {{-- Tabel Item --}}
                 <h4 class="text-lg font-medium mb-4 text-gray-900 dark:text-white">Rincian Menu Pesanan</h4>
                 <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -146,6 +158,7 @@
                     </table>
                 </div>
 
+                {{-- Tombol Kembali --}}
                 <div class="mt-8 flex justify-end">
                     <a href="{{ route('orders.index') }}" 
                        class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
